@@ -1,41 +1,32 @@
-import { getLongUrl } from "@/db/apiUrls";
 import {storeClicks} from "@/db/apiClicks";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { BarLoader } from "react-spinners";
+import {getLongUrl} from "@/db/apiUrls";
+import useFetch from "@/hooks/use-fetch";
+import {useEffect} from "react";
+import {useParams} from "react-router-dom";
+import {BarLoader} from "react-spinners";
 
 const RedirectLink = () => {
-  const { id } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {id} = useParams();
+
+  const {loading, data, fn} = useFetch(getLongUrl, id);
+
+  const {loading: loadingStats, fn: fnStats} = useFetch(storeClicks, {
+    id: data?.id,
+    originalUrl: data?.original_url,
+  });
 
   useEffect(() => {
-    const redirect = async () => {
-      try {
-        const data = await getLongUrl(id);
+    fn();
+  }, []);
 
-        if (!data || !data.original_url) {
-          setError("URL not found");
-          setLoading(false);
-          return;
-        }
+  useEffect(() => {
+    if (!loading && data) {
+      fnStats();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
-        // Fire-and-forget click recording
-        storeClicks({ id: data.id, originalUrl: data.original_url });
-
-        // Redirect immediately
-        window.location.href = data.original_url;
-      } catch (err) {
-        console.error(err);
-        setError("Failed to redirect");
-        setLoading(false);
-      }
-    };
-
-    redirect();
-  }, [id]);
-
-  if (loading) {
+  if (loading || loadingStats) {
     return (
       <>
         <BarLoader width={"100%"} color="#36d7b7" />
@@ -43,10 +34,6 @@ const RedirectLink = () => {
         Redirecting...
       </>
     );
-  }
-
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
   }
 
   return null;

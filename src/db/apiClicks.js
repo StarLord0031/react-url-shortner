@@ -14,41 +14,27 @@ export async function getClicksForUrls(urlIds) {
 
 const parser = new UAParser();
 
-
-
-export const storeClicks = async ({ id, originalUrl }) => {
+export const storeClicks = async ({id, originalUrl}) => {
   try {
-    // 1. Get device info
     const res = parser.getResult();
-    const device = res.type || "desktop";
+    const device = res.type || "desktop"; // Default to desktop if type is not detected
 
-    // 2. Get location info (IP-based)
-    let city = null;
-    let country = null;
-    try {
-      const response = await fetch("https://ipapi.co/json");
-      const locationData = await response.json();
-      city = locationData.city;
-      country = locationData.country_name;
-    } catch (locError) {
-      console.warn("Unable to fetch location info:", locError);
-    }
+    const response = await fetch("https://ipapi.co/json");
+    const {city, country_name: country} = await response.json();
 
-    // 3. Insert click record into Supabase (ignore failures)
+    // Record the click
     await supabase.from("clicks").insert({
       url_id: id,
-      city,
-      country,
-      device,
-      created_at: new Date().toISOString(),
+      city: city,
+      country: country,
+      device: device,
     });
 
+    // Redirect to the original URL
+    window.location.href = originalUrl;
   } catch (error) {
     console.error("Error recording click:", error);
   }
-
-  // 4. Return the original URL to let the component handle redirect
-  return originalUrl;
 };
 
 export async function getClicksForUrl(url_id) {
