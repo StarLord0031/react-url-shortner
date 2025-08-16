@@ -1,5 +1,5 @@
 import { getLongUrl } from "@/db/apiUrls";
-import storeClicks from "@/db/apiClicks";
+import {storeClicks} from "@/db/apiClicks";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BarLoader } from "react-spinners";
