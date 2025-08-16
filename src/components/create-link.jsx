@@ -118,7 +118,7 @@ export function CreateLink() {
         />
         {errors.longUrl && <Error message={errors.longUrl} />}
         <div className="flex items-center gap-2">
-          <Card className="p-2">cutyoururl.in</Card> /
+          <Card className="p-2">snipster.vercel.app</Card> /
           <Input
             id="customUrl"
             placeholder="Custom Link (optional)"
