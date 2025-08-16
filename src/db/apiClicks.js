@@ -12,10 +12,11 @@ export async function getClicksForUrls(urlIds) {
     return data;
 }
 
-const parser = new UAParser();
+
 
 export const storeClicks = async ({id, originalUrl}) => {
   try {
+    const parser = new UAParser(navigator.userAgent);
     const res = parser.getResult();
     const device = res.type || "desktop"; // Default to desktop if type is not detected
 
