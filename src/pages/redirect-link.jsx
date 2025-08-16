@@ -7,31 +7,25 @@ import { BarLoader } from "react-spinners";
 const RedirectLink = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [urlData, setUrlData] = useState(null);
 
   useEffect(() => {
-    const fetchAndRedirect = async () => {
+    const redirect = async () => {
       try {
-        // 1. Get the original URL
         const data = await getLongUrl(id);
-        if (!data || !data.original_url) {
-          throw new Error("URL not found");
-        }
+        if (!data || !data.original_url) throw new Error("URL not found");
 
-        setUrlData(data);
+        // Call storeClicks, it records analytics but does NOT redirect
+        const redirectUrl = await storeClicks({ id: data.id, originalUrl: data.original_url });
 
-        // 2. Optionally store click stats (you can skip user_id here)
-        await storeClicks({ id: data.id, originalUrl: data.original_url });
-
-        // 3. Redirect to original URL
-        window.location.href = data.original_url;
+        // Redirect user after recording analytics
+        window.location.href = redirectUrl;
       } catch (err) {
         console.error(err);
         setLoading(false);
       }
     };
 
-    fetchAndRedirect();
+    redirect();
   }, [id]);
 
   if (loading) {
