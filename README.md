@@ -10,3 +10,39 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+# 🚀 Snipster
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=vercel)](https://snipster.vercel.app)
+
+A sleek and modern project for managing snippets.  
+
+---
+
+## 🌟 Features
+- Fast and responsive UI  
+- Easy snippet management  
+- Secure and deploy-ready  
+
+---
+
+## 📌 Deployment
+You can check the live version here:  
+[https://snipster.vercel.app](https://snipster.vercel.app)
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend:** React, Tailwind CSS  
+- **Backend:** Node.js / Vercel Serverless Functions  
+- **Database:** (Add your DB here if any)  
+
+---
+
+## ⚡ How to Run Locally
+```bash
+git clone https://github.com/your-username/snippets.git
+cd snippets
+npm install
+npm run dev
+
