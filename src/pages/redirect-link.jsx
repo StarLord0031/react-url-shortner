@@ -7,17 +7,18 @@ import { BarLoader } from "react-spinners";
 const RedirectLink = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const redirect = async () => {
       try {
         const data = await getLongUrl(id);
-        if (!data || !data.original_url) throw new Error("URL not found");
 
-        // Call storeClicks, it records analytics but does NOT redirect
+        if (!data || !data.original_url) {
+          console.warn("Short link not found");
+          setLoading(false);
+          return;
+        }
+
         const redirectUrl = await storeClicks({ id: data.id, originalUrl: data.original_url });
-
-        // Redirect user after recording analytics
         window.location.href = redirectUrl;
       } catch (err) {
         console.error(err);
@@ -27,6 +28,7 @@ const RedirectLink = () => {
 
     redirect();
   }, [id]);
+
 
   if (loading) {
     return (
