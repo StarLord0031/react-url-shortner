@@ -1,34 +1,40 @@
-
-import {storeClicks} from "@/db/apiClicks";
-import {getLongUrl} from "@/db/apiUrls";
-import useFetch from "@/hooks/use-fetch";
-import {useEffect} from "react";
-import {useParams} from "react-router-dom";
-import {BarLoader} from "react-spinners";
+import { storeClicks } from "@/db/apiClicks";
+import { getLongUrl } from "@/db/apiUrls";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { BarLoader } from "react-spinners";
 
 const RedirectLink = () => {
-  const {id} = useParams();
-
-  const {loading, data, fn} = useFetch(getLongUrl, id);
-
-  const {loading: loadingStats, fn: fnStats} = useFetch(storeClicks, {
-    id: data?.id,
-    originalUrl: data?.original_url,
-  });
+  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [urlData, setUrlData] = useState(null);
 
   useEffect(() => {
-    fn();
-  }, []);
+    const fetchAndRedirect = async () => {
+      try {
+        // 1. Get the original URL
+        const data = await getLongUrl(id);
+        if (!data || !data.original_url) {
+          throw new Error("URL not found");
+        }
 
-  useEffect(() => {
-    if (!loading && data) {
-      fnStats();
-      window.location.href = data.original_url;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
+        setUrlData(data);
 
-  if (loading || loadingStats) {
+        // 2. Optionally store click stats (you can skip user_id here)
+        await storeClicks({ id: data.id, originalUrl: data.original_url });
+
+        // 3. Redirect to original URL
+        window.location.href = data.original_url;
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+
+    fetchAndRedirect();
+  }, [id]);
+
+  if (loading) {
     return (
       <>
         <BarLoader width={"100%"} color="#36d7b7" />
@@ -38,7 +44,7 @@ const RedirectLink = () => {
     );
   }
 
-  return null;
+  return <p>Failed to redirect. URL not found.</p>;
 };
 
 export default RedirectLink;
