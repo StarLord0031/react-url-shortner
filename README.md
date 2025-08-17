@@ -35,14 +35,9 @@ You can check the live version here:
 ## 🛠️ Tech Stack
 - **Frontend:** React, Tailwind CSS  
 - **Backend:** Node.js / Vercel Serverless Functions  
-- **Database:** (Add your DB here if any)  
+- **Database:** Supabase  
 
 ---
 
-## ⚡ How to Run Locally
-```bash
-git clone https://github.com/your-username/snippets.git
-cd snippets
-npm install
-npm run dev
+
 
